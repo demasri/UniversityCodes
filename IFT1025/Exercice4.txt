@@ -1,0 +1,61 @@
+//Auteur: Daniel El-Masri (20096261)
+//Exercice Note 4
+//Plan Objects + Classes pour rfk.java
+
+public class Items:
+-------------------
+
+Attributs:
+
+	1- private int position : position sur le board
+
+public class Robot extends Items:
+---------------------------------
+
+Attributs:
+
+	private int nbrKey s: nombres de cle que robot possede
+	private String val : symbole ASCII qui represente le robot
+
+Methods:
+
+	public void deplacer() : permet de deplacer robot
+
+	public void prendreCle : permet de recuperer une cle
+
+public class Kitten extends Items:
+----------------------------------
+
+Attributs:
+
+	private String val : symbole ASCII qui represente kitten
+
+Methods:
+
+	public void displayText : imprime un text lorsque robot reach kitten
+
+public class Keys extends Items:
+--------------------------------
+
+Attributs:
+
+	private String val : symbole ASCII qui represente les keys
+
+Methodes:
+
+	public Keys (pos) : constructeur de keys
+
+	public void ramasser : permet aux keys de se faire prendre par robot
+
+public class Misc extends Items:
+--------------------------------
+
+Attributs:
+
+	private String val : symbole ASCII qui represente les misc items
+
+Methodes:
+
+	public Misc : constructeur de misc items
+
+	public void displayText : imprime un text lorsque robot est sur misc
