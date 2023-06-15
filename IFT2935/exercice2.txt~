@@ -1,0 +1,13 @@
+Requetes SQL pour l'Exercice 2 du TP2:
+=====================================================================================
+
+==========Faire sortir les noc des cours ayant une moyenne superieure a 72===========
+1. 
+
+==========Faire sortir les noc des cours ayant plus de 60 etudiants==================
+2. select noc from inscription group by noc having count(noc)>60;
+
+3.
+
+4.
+

@@ -1,0 +1,49 @@
+begin transaction;
+set search_path to releves_notes;
+
+create or replace function amort(emprunt numeric, paiement numeric, taux numeric)
+returns table(period int, pay numeric, rest numeric) as $$
+WITH RECURSIVE amortissement AS (
+
+SELECT  CAST(1 AS int) as period, Round(0, 2)  as pay,  $1  as rest
+UNION
+SELECT CASE
+WHEN ($3     > 0.099) THEN   CAST(period  AS int)
+WHEN ( $2   > $1) THEN   CAST(period  AS int)
+WHEN ($3*$1) = $2 THEN   CAST(period  AS int)
+WHEN ($3*$1) < $2 THEN   CAST(period + 1 AS int)
+ELSE CAST(period + 1 AS int)
+END  as period,
+
+CASE
+WHEN ($3     > 0.099)                  THEN   Round(pay, 2)
+	        WHEN ( $2   > $1)                      THEN   Round(pay, 2)
+		       WHEN ($3*$1) = $2                      THEN   Round((rest - rest), 2)
+		               ELSE  CASE WHEN  (Round(rest,2) >= $2) THEN   Round($2, 2) ELSE $2-  ($2 - (rest + rest*Round($3,2))) END
+			         END   as pay,
+
+  CASE
+         WHEN ($3     > 0.099)                  THEN   Round((rest - rest), 2)
+	        WHEN ( $2   > $1)                      THEN   Round((rest - rest), 2)
+		       WHEN ($3*$1) = $2                      THEN   Round((rest - rest), 2)
+		              ELSE (CASE WHEN  rest  < $2            THEN   Round(0,2)  ELSE  rest*(1+ $3)  -  $2 END)
+			        END  as rest
+
+  FROM amortissement
+
+  WHERE rest > 0
+      OR pay  > rest
+          OR ($3*$1) =  $2
+	      OR $3   > 0.099
+	          OR ($2   > $1)
+
+  )
+
+  SELECT period, Round(pay,2) as pay  , Round(rest, 2) as rest  from amortissement
+     WHERE  ((pay < rest) AND rest > 0)
+        OR     ((pay > rest) AND rest  != 0)
+	   OR     (rest  = 0   AND pay != 0)
+	     ;
+	     $$ language 'sql';
+	     select * from amort(10000.00,00.00,0.05);
+	     rollback;

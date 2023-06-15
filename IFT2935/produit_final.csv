@@ -1,0 +1,31 @@
+32,1,Table_TSL,Table de Salon de Luxe,5999.00,t,1,2017-07-05
+33,2,Table_TSN,Table de Salon normal,2999.00,t,1,2017-06-05
+34,3,Table_TSB,Table basse de Salon,1599.00,f,1,2017-04-05
+35,4,Table_TM,Table à manger,2799.00,f,1,2017-08-03
+36,5,Table_DC,Table de chevet,199.00,f,1,2017-12-05
+37,6,Lit_KSL,Lit king size de luxe,2999.00,t,1,2017-01-03
+38,7,Lit_KSN,Lit king size normal,999.00,f,1,2017-06-02
+39,8,Lit_QSL,Lit queen size de luxe,1999.00,t,1,2017-01-22
+40,9,Lit_QSN,Lit queen size normal,599.00,f,1,2017-12-17
+41,10,Bilboquet_2_4,Bilboquet pour enfant de 2 à 4 ans,299.75,t,2,2017-05-15
+42,11,Bilboquet_5_10,Bilboquet pour enfant de 5 à 10 ans,99.25,f,2,2017-05-12
+43,12,Toupie_3_5,Toupie pour enfant de 3 à 5 ans,199.75,t,2,2017-05-11
+44,13,Toupie_12_15,Toupie pour enfant de 12 à 15 ans,99.25,f,2,2017-05-04
+45,14,Think_Elmasri_T650,Ordinateur portable de marque Elmasri,6599.00,t,3,2017-04-15
+46,15,Phone_Elmasri_P500,Telephone portable de marque Elmasri,775.85,f,3,2017-04-14
+47,16,Dream_Elmasri_650,Ordinateur Professionel de marque Elmasri,3899.99,f,3,2017-04-13
+48,17,Pad_Elmasri_P100,Tablette portable de marque Elmasri,699.99,f,3,2016-04-08
+49,18,Dream_Car_Elmasri_DC700,Voiture de luxe de marque Elmasri,399699.99,t,4,2016-04-01
+50,19,Dream_Car_Elmasri_DC500,Voiture de luxe de marque Elmasri,299699.99,f,4,2016-03-17
+51,20,Dream_Car_Elmasri_DC3500,Voiture de luxe de marque Elmasri,199699.99,f,4,2016-03-15
+52,21,Jogging_Sport_XXXL,Survetement de sport de taille XXXL,599.95,t,5,2016-03-15
+53,1,Jogging_Sport_XL,Survetement de sport de taille XL,199.95,f,5,2016-03-08
+54,2,Jogging_Sport_L,Survetement de sport de taille L,99.95,f,5,2016-03-07
+55,3,Jogging_Sport_M,Survetement de sport de taille M,79.95,f,5,2016-03-01
+56,4,Couscous_Saquenay,Couscous du saguenay à base poissons,599.95,t,6,2016-02-25
+57,5,Couscous_Estrie,Couscous de estrie à base canard,599.95,f,6,2016-02-07
+58,6,Cassoulet_Liban,Cassoulet du Liban,199.95,f,6,2016-01-21
+59,7,Jogging_Elmasri_XXXL,Survetement de ville de taille XXXL,499.95,t,8,2016-01-21
+60,8,Jogging_Elmasri_XL,Survetement de ville de taille XL,99.95,f,8,2016-01-14
+61,9,Jogging_Elmasri_L,Survetement de ville de taille L,89.95,t,8,2016-01-10
+62,10,Jogging_Elmasri_M,Survetement de ville de taille M,69.95,f,8,2016-01-05

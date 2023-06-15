@@ -1,0 +1,110 @@
+CREATE SCHEMA ift_projet_test6;
+
+set search_path to ift2935_projet_test6;
+
+CREATE TABLE Affiche (
+  Date_de_Publication date NOT NULL,
+    Id_Annonceur int NOT NULL,
+      Id_Produit int NOT NULL,
+        PRIMARY KEY (Id_Annonceur, Id_Produit)
+	);
+
+COMMENT ON COLUMN Affiche.Date_de_Publication IS 'Date d''affichage du produit par l.annonceur';
+COMMENT ON COLUMN Affiche.Id_Annonceur IS 'Identifiant de l''annonceur';
+COMMENT ON COLUMN Affiche.Id_Produit IS 'Identifiant du Produit';
+
+CREATE TABLE Annonceur (
+  Id_Annonceur int NOT NULL,
+    Nom varchar(50) NOT NULL,
+      Prenom varchar(50) NOT NULL,
+        Code_Postal varchar(20) NOT NULL,
+	  Courriel varchar(25) NOT NULL,
+	    Numero_Telephone varchar(25) NOT NULL,
+	      CONSTRAINT PK_Annonceur PRIMARY KEY (Id_Annonceur),
+	        CONSTRAINT UK_Annonceur_1 UNIQUE (Nom, Prenom, Code_Postal, Courriel, Numero_Telephone)
+		);
+
+COMMENT ON COLUMN Annonceur.Id_Annonceur IS 'Identifiant de l''annonceur';
+COMMENT ON COLUMN Annonceur.Nom IS 'Nom de l''annonceur';
+COMMENT ON COLUMN Annonceur.Prenom IS 'Prenom de l''annonceur';
+COMMENT ON COLUMN Annonceur.Code_Postal IS 'Code Postal de l''annonceur';
+COMMENT ON COLUMN Annonceur.Courriel IS 'Courriel de l''annonceur';
+COMMENT ON COLUMN Annonceur.Numero_Telephone IS 'Numero de telephone de l''annonceur';
+
+CREATE TABLE Categorie (
+  Id_Categorie int NOT NULL,
+    Nom varchar(255) NOT NULL,
+      Description varchar(255) NOT NULL,
+        CONSTRAINT PK_Categorie PRIMARY KEY (Id_Categorie),
+	  CONSTRAINT UK_Categorie_Nom UNIQUE (Nom),
+	    CONSTRAINT UK_Categorie_Description UNIQUE (Description)
+	    );
+
+COMMENT ON COLUMN Categorie.Id_Categorie IS 'Identifiant de la categorie du produit';
+COMMENT ON COLUMN Categorie.Nom IS 'Code de la categorie du produit';
+COMMENT ON COLUMN Categorie.Description IS 'Description de la categorie du produit';
+
+CREATE TABLE Expert (
+  Id_Expert int NOT NULL,
+    Nom varchar(255) NOT NULL,
+      Prenom varchar(255) NOT NULL,
+        Numero_Employe varchar(255) NOT NULL,
+	  Date_Embauche date NOT NULL,
+	    CONSTRAINT PK_Expert PRIMARY KEY (Id_Expert),
+	      CONSTRAINT UK_Expert_Numero_Employe UNIQUE (Numero_Employe),
+	        CONSTRAINT UK_Expert_2 UNIQUE (Nom, Prenom, Numero_Employe, Date_Embauche)
+		);
+
+COMMENT ON COLUMN Expert.Id_Expert IS 'Identifiant de l''expert';
+COMMENT ON COLUMN Expert.Nom IS 'Nom  de l''expert';
+COMMENT ON COLUMN Expert.Prenom IS 'Prenom  de l''expert';
+COMMENT ON COLUMN Expert.Numero_Employe IS 'Numero d''employe  de l''expert';
+COMMENT ON COLUMN Expert.Date_Embauche EIS 'Date d''embauche  de l''expert';
+COMMENT ON CONSTRAINT UK_Expert_Numero_employe ON Expert IS 'Le numero Employe est unique';
+
+CREATE TABLE Historique_Prix (
+  Id_Produit int NOT NULL,
+  Id_Annonceur int NOT NULL,
+  Id_Expert int NOT NULL,
+  Date_Debut_Modification_Prix date NOT NULL,
+  Date_Fin_Modification_Prix date,
+  Prix_Propose decimal(10,2) NOT NULL,
+  PRIMARY KEY (Date_Debut_Modification_Prix, Date_Debut_Modification_Prix, Id_Produit, Id_Annonceur, Id_Expert, Date_Debut_Modification_Prix)
+);
+COMMENT ON COLUMN Historique_Prix.Id_Produit IS 'Identifiant du produit';
+COMMENT ON COLUMN Historique_Prix.Id_Annonceur IS 'Identifiant de l''annonceur';
+COMMENT ON COLUMN Historique_Prix.Id Expert IS 'Identifiant de l''expert';
+COMMENT ON COLUMN Historique_Prix.Date_Debut_Modification_Prix IS 'Date de debut effective proposee par l''expert';
+COMMENT ON COLUMN Historique_Prix.Date_Fin_Modification_Prix IS 'Date de fin effective proposee par l''expert';
+COMMENT ON COLUMN Historique_Prix.Prix_Propose IS 'Prix Modifie propose par l''expert';
+
+CREATE TABLE Produit (
+  Id_Produit int NOT NULL,
+  Id_Annonceur int NOT NULL,
+  Titre varchar(50) NOT NULL,
+  Description varchar(255) NOT NULL,
+  Prix decimal(10,2) NOT NULL,
+  Statut bool NOT NULL,
+  Id_Categorie int NOT NULL,
+  Date_De_Publication date,
+  PRIMARY KEY (Id_Annonceur, Id_Produit),
+  CONSTRAINT UK_Produit UNIQUE (Id_Produit),
+  CONSTRAINT UK_Produit_2 UNIQUE (Id_Annonceur, Titre, Description, Prix, Statut, Id_Categorie, Date_De_Publication)
+);
+
+COMMENT ON COLUMN Produit.Id_Produit IS 'Idendifiant du produit';
+COMMENT ON COLUMN Produit.Id_Annonceur IS 'Identifiant de l''annonceur';
+COMMENT ON COLUMN Produit.Titre IS 'Titre du produit';
+COMMENT ON COLUMN Produit.Description IS 'Description du produit';
+COMMENT ON COLUMN Produit.Prix IS 'Prix du produit affiche par l''annonceur';
+COMMENT ON COLUMN Produit.Statut IS 'Statut du produit (1 pour Vendu et 0 pour Non Vendu)';
+COMMENT ON COLUMN Produit.Id_Categorie IS 'Identifiant de la categorie du produit';
+COMMENT ON COLUMN Produit.Date_De_Publication IS 'Date de publication de l''annonce';
+COMMENT ON CONSTRAINT UK_Produit ON Produit IS 'Chaque annonce a son id_produit different';
+
+ALTER TABLE Affiche ADD CONSTRAINT fk_Affiche_Annonceur_1 FOREIGN KEY (Id_Annonceur) REFERENCES Annonceur (Id_Annonceur);
+ALTER TABLE Affiche ADD CONSTRAINT fk_Affiche_Produit_1 FOREIGN KEY (Id_Produit) REFERENCES Produit (Id_Annonceur);
+ALTER TABLE Historique_Prix ADD CONSTRAINT fk_Historique_Prix_Expert_1 FOREIGN KEY (Id Expert) REFERENCES Expert (Id_Expert);
+ALTER TABLE Historique_Prix ADD CONSTRAINT fk_Historique_Prix_Produit_1 FOREIGN KEY (Date_Debut_Modification_Prix, Id_Annonceur) REFERENCES Produit (Id_Annonceur, Id_Produit);
+ALTER TABLE Produit ADD CONSTRAINT fk_Produit_Categorie_1 FOREIGN KEY (Id_Categorie) REFERENCES Categorie (Id_Categorie);
+ALTER TABLE Produit ADD CONSTRAINT fk_Produit_Annonceur_1 FOREIGN KEY (Id_Annonceur) REFERENCES Annonceur (Id_Annonceur);

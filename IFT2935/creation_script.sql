@@ -1,0 +1,122 @@
+create schema ift2935_projet_test2;
+
+set search_path to ift2935_projet_test2;
+
+CREATE TABLE "Affiche" (
+  "Date_de_Publication" date NOT NULL,
+    "Id_Annonceur" int NOT NULL,
+      "Id_Produit" int NOT NULL,
+        PRIMARY KEY ("Id_Annonceur", "Id_Produit")
+	);
+	COMMENT ON COLUMN "Affiche"."Date_de_Publication" IS 'Date d''affichage du produit par l.annonceur';
+	COMMENT ON COLUMN "Affiche"."Id_Annonceur" IS 'Identifiant de l''annonceur';
+	COMMENT ON COLUMN "Affiche"."Id_Produit" IS 'Identifiant du Produit';
+
+CREATE TABLE "Annonceur" (
+  "Id_Annonceur" int NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "Nom" varchar(50) NOT NULL,
+      "Prénom" varchar(50) NOT NULL,
+        "Code_Postal" varchar(20) NOT NULL,
+	  "Courriel" varchar(25) NOT NULL,
+	    "Numéro_Téléphone" int,
+	      CONSTRAINT "PK_Annonceur" PRIMARY KEY ("Id_Annonceur")
+	      );
+	      COMMENT ON COLUMN "Annonceur"."Id_Annonceur" IS 'Identifiant de l''annonceur';
+	      COMMENT ON COLUMN "Annonceur"."Nom" IS 'Nom de l''annonceur';
+	      COMMENT ON COLUMN "Annonceur"."Prénom" IS 'Prénom de l''annonceur';
+	      COMMENT ON COLUMN "Annonceur"."Code_Postal" IS 'Code Postal de l''annonceur';
+	      COMMENT ON COLUMN "Annonceur"."Courriel" IS 'Courriel de l''annonceur';
+	      COMMENT ON COLUMN "Annonceur"."Numéro_Téléphone" IS 'Numéro de téléphone de l''annonceur';
+
+CREATE TABLE "Catégorie" (
+  "Id_Catégorie" int NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "Nom" varchar(255) NOT NULL,
+      "Description" varchar(255),
+        CONSTRAINT "PK_Categorie" PRIMARY KEY ("Id_Catégorie")
+	);
+	COMMENT ON COLUMN "Catégorie"."Id_Catégorie" IS 'Identifiant de la catégorie du produit';
+	COMMENT ON COLUMN "Catégorie"."Nom" IS 'Nom de la catégorie du produit';
+	COMMENT ON COLUMN "Catégorie"."Description" IS 'Description de la catégorie du produit';
+
+CREATE TABLE "Client" (
+  "Id_Client" int NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "Nom" varchar(255) NOT NULL,
+      "Prénom" varchar(255) NOT NULL,
+        "Adresse_Postal" varchar(255),
+	  "Courriel" varchar(255),
+	    "Numéro_Téléphone" varchar(255),
+	      "Code_Postal" varchar(255),
+	        CONSTRAINT "PK_Client" PRIMARY KEY ("Id_Client")
+		);
+		COMMENT ON COLUMN "Client"."Id_Client" IS 'Identifiant du client';
+		COMMENT ON COLUMN "Client"."Nom" IS 'Nom du client';
+		COMMENT ON COLUMN "Client"."Prénom" IS 'Prénom du client';
+		COMMENT ON COLUMN "Client"."Adresse_Postal" IS 'Adresse postale complète du client';
+		COMMENT ON COLUMN "Client"."Courriel" IS 'Courriel du client';
+		COMMENT ON COLUMN "Client"."Numéro_Téléphone" IS 'Numéro de téléphone du client';
+		COMMENT ON COLUMN "Client"."Code_Postal" IS 'Code postal du client';
+
+CREATE TABLE "Expert" (
+  "Id_Expert" int NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "Nom" varchar(255) NOT NULL,
+      "Prénom" varchar(255) NOT NULL,
+        "Numéro_Employé" varchar(255) NOT NULL,
+	  "Date_Embauche" date NOT NULL,
+	    CONSTRAINT "PK_Expert" PRIMARY KEY ("Id_Expert")
+	    );
+	    COMMENT ON COLUMN "Expert"."Id_Expert" IS 'Identifiant de l''expert';
+	    COMMENT ON COLUMN "Expert"."Nom" IS 'Nom  de l''expert';
+	    COMMENT ON COLUMN "Expert"."Prénom" IS 'Prénom  de l''expert';
+	    COMMENT ON COLUMN "Expert"."Numéro_Employé" IS 'Numéro d''employé  de l''expert';
+	    COMMENT ON COLUMN "Expert"."Date_Embauche" IS 'Date d''embauche  de l''expert';
+
+CREATE TABLE "Historique_Prix" (
+  "Date_Début_Modification_Prix" date NOT NULL,
+    "Date_Fin_Modification_Prix" date,
+      "Prix_Proposé" decimal(10,2) NOT NULL,
+        "Id_Produit" int NOT NULL,
+	  "Id Expert" int NOT NULL,
+	    PRIMARY KEY ("Id_Produit", "Id Expert", "Date_Début_Modification_Prix")
+	    );
+	    COMMENT ON COLUMN "Historique_Prix"."Date_Début_Modification_Prix" IS 'Date de début effective proposée par l''expert';
+	    COMMENT ON COLUMN "Historique_Prix"."Date_Fin_Modification_Prix" IS 'Date de fin effective proposée par l''expert';
+	    COMMENT ON COLUMN "Historique_Prix"."Prix_Proposé" IS 'Prix Modifié proposé par l''expert';
+	    COMMENT ON COLUMN "Historique_Prix"."Id_Produit" IS 'Identifiant du produit';
+	    COMMENT ON COLUMN "Historique_Prix"."Id Expert" IS 'Identifiant de l''expert';
+
+CREATE TABLE "Produit" (
+  "Id_Produit" int NOT NULL GENERATED ALWAYS  AS IDENTITY,
+    "Titre" varchar(50) NOT NULL,
+      "Description" varchar(255) NOT NULL,
+        "Prix" decimal(10,2) NOT NULL,
+	  "Statut" bool,
+	    "Id_Catégorie" int,
+	      PRIMARY KEY ("Id_Produit")
+	      );
+	      COMMENT ON COLUMN "Produit"."Id_Produit" IS 'Idendifiant du produit';
+	      COMMENT ON COLUMN "Produit"."Titre" IS 'Titre du produit';
+	      COMMENT ON COLUMN "Produit"."Description" IS 'Description du produit';
+	      COMMENT ON COLUMN "Produit"."Prix" IS 'Prix du produit affiché par l''annonceur';
+	      COMMENT ON COLUMN "Produit"."Statut" IS 'Statut du produit (0 pour Vendu et 1 pour Non Vendu)';
+	      COMMENT ON COLUMN "Produit"."Id_Catégorie" IS 'Identifiant de la catégorie du produit';
+
+CREATE TABLE "Vente" (
+  "Date_de_la_vente" date NOT NULL,
+    "Quantité" int DEFAULT 1,
+      "Id_Client" int NOT NULL,
+        "Id_Produit" int NOT NULL,
+	  PRIMARY KEY ("Id_Client", "Id_Produit", "Date_de_la_vente")
+	  );
+	  COMMENT ON COLUMN "Vente"."Date_de_la_vente" IS 'Date et heure de la vente ';
+	  COMMENT ON COLUMN "Vente"."Quantité" IS 'Quantité achetée par le Client';
+	  COMMENT ON COLUMN "Vente"."Id_Client" IS 'Identifiant du Client';
+	  COMMENT ON COLUMN "Vente"."Id_Produit" IS 'Identifiant du produit';
+
+ALTER TABLE "Affiche" ADD CONSTRAINT "fk_Affiche_Annonceur_1" FOREIGN KEY ("Id_Annonceur") REFERENCES "Annonceur" ("Id_Annonceur");
+ALTER TABLE "Affiche" ADD CONSTRAINT "fk_Affiche_Produit_1" FOREIGN KEY ("Id_Produit") REFERENCES "Produit" ("Id_Produit");
+ALTER TABLE "Historique_Prix" ADD CONSTRAINT "fk_Historique_Prix_Expert_1" FOREIGN KEY ("Id Expert") REFERENCES "Expert" ("Id_Expert");
+ALTER TABLE "Historique_Prix" ADD CONSTRAINT "fk_Historique_Prix_Produit_1" FOREIGN KEY ("Id_Produit") REFERENCES "Produit" ("Id_Produit");
+ALTER TABLE "Produit" ADD CONSTRAINT "fk_Produit_Catégorie_1" FOREIGN KEY ("Id_Catégorie") REFERENCES "Catégorie" ("Id_Catégorie");
+ALTER TABLE "Vente" ADD CONSTRAINT "fk_Vente_Produit_1" FOREIGN KEY ("Id_Produit") REFERENCES "Produit" ("Id_Produit");
+ALTER TABLE "Vente" ADD CONSTRAINT "fk_Vente_Client_1" FOREIGN KEY ("Id_Client") REFERENCES "Client" ("Id_Client");
+

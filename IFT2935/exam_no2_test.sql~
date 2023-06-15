@@ -1,0 +1,79 @@
+set search_path to releves_notes;WITH  REQ1 AS
+(SELECT n.trimc as trimc, n.sigle as sigle, titre,  CASE WHEN  (n.note = 'ABA') THEN NULL ELSE credits END as credits, n.note  as  note
+  FROM notes n left join titres t on (n.sigle = t.sigle)
+    left join credits c on (n.sigle = c.sigle)
+      left join valnotes v on (n.note = v.note)
+        where
+	  n.matricule = '51780'
+	    and n.prog = '117510'
+	      -- GROUP BY n.trimc , n.sigle , titre, credits, CAST( n.note  AS CHAR(6) )
+	        GROUP BY n.trimc , n.sigle , titre, CASE WHEN  (n.note = 'ABA') THEN NULL ELSE credits END, n.note
+		  ORDER BY n.trimc ASC
+		    ),SUM_CREDITS_PAR_TRIM AS
+		      (SELECT trimc,
+		           SUM(credits) CREDITS
+			   FROM REQ1
+			   GROUP BY trimc
+			     ),
+			        SUM_CREDITS_PAR_TRIM_MULT_PAR_VALEUR AS
+				  (SELECT
+				        REQ1.trimc,
+					      SUM(REQ1.credits*v.valeur)  AS SUM_CREDITS_PAR_TRIM_MULT_PAR_VALEUR
+					           FROM REQ1
+						        inner join valnotes v on (REQ1.note = v.note)
+							     GROUP BY REQ1.trimc
+							       ),  MOYENNE_PAR_TRIM AS
+							         (SELECT T1.trimc,
+								        SUM_CREDITS_PAR_TRIM_MULT_PAR_VALEUR/CREDITS   AS MOYENNE_PAR_TRIM
+									  FROM SUM_CREDITS_PAR_TRIM T1
+									    INNER JOIN SUM_CREDITS_PAR_TRIM_MULT_PAR_VALEUR  T2 ON ( T1.trimc = T2.trimc)
+									      --GROUP BY T1.trimc
+									        --, v.valeur
+										  ORDER BY T1.trimc  ), REQ2 AS
+										  --  (SELECT n.trimc, CAST('Moy' as char(10)) as sigle, CAST('Moyenne du trimestre' as varchar(45)) as titre,  SUM(c.credits)    credits,  TO_CHAR(CAST(AVG(v.valeur) AS REAL), '999.99')   as note
+										  (SELECT n.trimc,
+										  CAST('Moy' as char(10)) as sigle,
+										  CAST('Moyenne du trimestre' as varchar(45)) as titre,
+										  SUM(CASE WHEN  (n.note = 'ABA') THEN NULL ELSE c.credits END)    credits,
+										  --TO_CHAR(CAST(AVG(v.valeur) AS REAL), '999.999')   as note
+										  TO_CHAR(mpt.MOYENNE_PAR_TRIM  , '999.999') as note  FROM notes n left join titres t on (n.sigle = t.sigle)
+										    left join credits c on (n.sigle = c.sigle)
+										      left join valnotes v on (n.note = v.note)
+										        left join MOYENNE_PAR_TRIM mpt on (mpt.trimc = n.trimc)
+											  -- inner join REQ1 r on (n.trimc = r.trimc)
+											    where
+											      n.matricule = '51780'
+											        and n.prog = '117510'
+												  GROUP BY n.trimc, TO_CHAR(mpt.MOYENNE_PAR_TRIM  , '999.999')
+												  ORDER BY n.trimc ASC
+												    ),
+												       --SELECT * FROM MOYENNE_PAR_TRIM
+												         -- SELECT * FROM REQ2  -- ;
+													 REQ3 AS
+													   (SELECT trimc,
+													     CAST('MoyCum' as char(10))  AS sigle,
+													       CAST('Moyenne cumulative' as varchar(45))  AS titre,
+													       --   SUM(CASE WHEN  (note = 'ABA') THEN NULL ELSE credits END) OVER (order by trimc asc rows between unbounded preceding and current row) CREDITS,
+													         SUM(credits ) OVER (order by trimc asc rows between unbounded preceding and current row) CREDITS,
+														   TO_CHAR(CAST(AVG(CAST( note AS REAL)) AS REAL), '999.999')   as note   --TO_CHAR(CAST(AVG(CAST( note AS REAL))  AS REAL), '999.999')   as note -- TO_CHAR(CAST(AVG(v.valeur)     OVER (order by n.trimc asc rows between unbounded preceding and current row)        AS REAL), '999.999')   as note
+														     -- FROM notes n inner join titres t on (n.sigle = t.sigle)
+														     --   inner join credits c on (n.sigle = c.sigle)
+														     --   inner join valnotes v on (n.note = v.note)
+														     --   inner join REQ2 r on (n.trimc = r.trimc)
+														     --   where
+														     --   n.matricule = '51780'
+														     --   and n.prog = '117510'
+														     --  --  GROUP BY n.trimc, c.credits
+														     --   GROUP BY n.trimc, CASE WHEN  (n.note = 'ABA') THEN NULL ELSE c.credits END
+														     FROM REQ2
+														     GROUP BY trimc, credits
+														         )
+															   SELECT * FROM REQ1
+															     UNION
+															       SELECT REQ2.* FROM REQ2, REQ1
+															         WHERE REQ2.trimc = REQ1.trimc
+																   UNION
+																     SELECT REQ3.* FROM REQ3, REQ2, REQ1
+																       WHERE REQ3.trimc = REQ1.trimc AND REQ3.trimc = REQ2.trimc
+																         ORDER BY trimc , sigle ASC
+																	   ;

@@ -1,0 +1,69 @@
+/*
+
+1.	Si le montant payé à chaque période (exple 100000) est supérieur au montant de l’emprunt (10000) 
+alors on retourne seulement une rangée celle de la période numéro 1 (comme si on a rien payé)  et  l’algorithme s’arrête. On suppose que il n’y aura aucun remboursement de trop payé. 
+
+2.    Si  le taux est aussi prohibitif i.e. trop élevé voire même usurier (taux supérieur ou égal à 100%) (exple  1.05), 
+alors on retourne seulement une rangée : celle de la période numéro 1 (comme si on a rien payé)  et  l’algorithme s’arrête. Nous refusons de payer si le taux est prohibitif
+
+3.    Si le montant à payer  à chaque période (exple 500) est strictement égal  à l’emprunt multiplié par le taux (exple 500), 
+alors on retourne seulement une rangée : celle de la période numéro 1 (comme si on a rien payé)  et  l’algorithme s’arrête. 
+Nous refusons de payer si le montant à payer à chaque période est strictement égal  à l’emprunt multiplié par le taux, car on ne pourra jamais finir de rembourser l’emprunt car le montant payé est égal aux intérêts à chaque période
+
+4.   Notre algorithme ne permet pas d’avoir le montant à payer (exple 400)  à chaque période est strictement inférieur  à l’emprunt multiplié par le taux (exple 500) , 
+alors l’algorithme retourne une erreur 
+
+*/
+
+
+begin transaction;
+set search_path to releves_notes;
+
+create or replace function
+  amort(emprunt numeric, paiement numeric, taux numeric) returns
+    table(period int, pay numeric, rest numeric) as $$
+      WITH RECURSIVE amortissement AS (
+
+
+ SELECT  CAST(1 AS int) as period, Round(0, 2)  as pay,  $1  as rest
+   UNION
+     SELECT   CASE
+                     WHEN ($3     > 0.099)         THEN   CAST(period  AS int)
+		                     WHEN ( $2   > $1)             THEN   CAST(period  AS int)
+				                     WHEN ($3*$1) = $2             THEN   CAST(period  AS int)
+						                     WHEN ($3*$1) < $2             THEN   CAST(period + 1 AS int)
+								                     ELSE CAST(period + 1 AS int)
+										                END  as period,
+
+  CASE
+         WHEN ($3     > 0.099)                  THEN   Round(pay, 2)
+	        WHEN ( $2   > $1)                      THEN   Round(pay, 2)
+		       WHEN ($3*$1) = $2                      THEN   Round((rest - rest), 2)
+		               ELSE  CASE WHEN  (Round(rest,2) >= $2) THEN   Round($2, 2) ELSE $2-  ($2 - (rest + rest*Round($3,2))) END
+			         END   as pay,
+
+  CASE
+         WHEN ($3     > 0.099)                  THEN   Round((rest - rest), 2)
+	        WHEN ( $2   > $1)                      THEN   Round((rest - rest), 2)
+		       WHEN ($3*$1) = $2                      THEN   Round((rest - rest), 2)
+		              ELSE (CASE WHEN  rest  < $2            THEN   Round(0,2)  ELSE  rest*(1+ $3)  -  $2 END)
+			        END  as rest
+
+  FROM amortissement
+
+  WHERE rest > 0
+      OR pay  > rest
+          OR ($3*$1) =  $2
+	      OR $3   > 0.099
+	          OR ($2   > $1)
+
+  )
+
+SELECT period, Round(pay,2) as pay  , Round(rest, 2) as rest  from amortissement
+WHERE  ((pay < rest) AND rest > 0)
+OR     ((pay > rest) AND rest  != 0)
+OR     (rest  = 0   AND pay != 0)
+	     ;
+	     $$ language 'sql';
+	     select * from amort(10000.00,1000.00,0.05);
+	     rollback;

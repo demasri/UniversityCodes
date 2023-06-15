@@ -1,0 +1,7 @@
+1 - Recherche de la moyenne des modifications prix proposer par les experts selon les catégories: 
+
+select c.nom, c.description, avg(h.prix_propose) moyenne from ift2935_projet_final.historique_prix h, ift2935_projet_final.produit p, ift2935_projet_final.categorie c where h.id_produit = p.id_produit and p.id_categorie = c.id_categorie group by c.nom, c.description;
+
+2 - Recherche des catégorie ayant le plus de proposition de modification de prix de leurs produits:
+
+select c.nom, c.description, count(c.nom) from ift2935_projet_final.historique_prix h, ift2935_projet_final.produit p, ift2935_projet_final.categorie c where h.id_produit = p.id_produit and c.id_categorie = p.id_categorie group by c.nom, c.description having count(c.nom) = (select max(my_count) from (select c.nom, c.description, count(c.nom) my_count from ift2935_projet_final.historique_prix h, ift2935_projet_final.produit p, ift2935_projet_final.categorie c where p.id_produit = h.id_produit and c.id_categorie = p.id_categorie group by c.nom, c.description) as foo); 

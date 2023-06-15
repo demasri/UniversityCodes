@@ -1,0 +1,2 @@
+set search_path to demo10e1;
+insert into oiseau values (3, 'Jack Reacher', 'Pigeon');
