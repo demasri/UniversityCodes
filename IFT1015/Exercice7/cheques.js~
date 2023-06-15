@@ -1,0 +1,15 @@
+//Daniel El-Masri (20096261)
+
+var fs = require("fs");
+
+var readFile = function (path) {
+    return fs.readFileSyn(path).toString();
+};
+
+var writeFile = function (path, text) {
+    return fs.writeFileSync(path, text);
+};
+
+var cheques = function (entree1, entree2) {
+    
+};
